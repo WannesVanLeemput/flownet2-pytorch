@@ -33,7 +33,7 @@ class FlowNet2(nn.Module):
         super(FlowNet2,self).__init__()
         self.batchNorm = batchNorm
         self.div_flow = div_flow
-        self.rgb_max = args.rgb_max
+        self.rgb_max = 255
         self.args = args
 
         self.channelnorm = ChannelNorm()
@@ -42,7 +42,7 @@ class FlowNet2(nn.Module):
         self.flownetc = FlowNetC.FlowNetC(args, batchNorm=self.batchNorm)
         self.upsample1 = nn.Upsample(scale_factor=4, mode='bilinear')
 
-        if args.fp16:
+        if self.fp16:
             self.resample1 = nn.Sequential(
                             tofp32(), 
                             Resample2d(),
@@ -53,7 +53,7 @@ class FlowNet2(nn.Module):
         # Block (FlowNetS1)
         self.flownets_1 = FlowNetS.FlowNetS(args, batchNorm=self.batchNorm)
         self.upsample2 = nn.Upsample(scale_factor=4, mode='bilinear')
-        if args.fp16:
+        if self.fp16:
             self.resample2 = nn.Sequential(
                             tofp32(), 
                             Resample2d(),
@@ -70,7 +70,7 @@ class FlowNet2(nn.Module):
         self.upsample3 = nn.Upsample(scale_factor=4, mode='nearest') 
         self.upsample4 = nn.Upsample(scale_factor=4, mode='nearest') 
 
-        if args.fp16:
+        if self.fp16:
             self.resample3 = nn.Sequential(
                             tofp32(), 
                             Resample2d(),
@@ -78,7 +78,7 @@ class FlowNet2(nn.Module):
         else:
             self.resample3 = Resample2d()
 
-        if args.fp16:
+        if self.fp16:
             self.resample4 = nn.Sequential(
                             tofp32(), 
                             Resample2d(),
@@ -365,7 +365,7 @@ class FlowNet2CS(nn.Module):
         self.flownetc = FlowNetC.FlowNetC(args, batchNorm=self.batchNorm)
         self.upsample1 = nn.Upsample(scale_factor=4, mode='bilinear')
 
-        if args.fp16:
+        if self.fp16:
             self.resample1 = nn.Sequential(
                             tofp32(), 
                             Resample2d(),
@@ -417,12 +417,13 @@ class FlowNet2CS(nn.Module):
 
 class FlowNet2CSS(nn.Module):
 
-    def __init__(self, args, batchNorm=False, div_flow = 20.):
+    def __init__(self, args, batchNorm=False, div_flow = 20., fp16=False):
         super(FlowNet2CSS,self).__init__()
         self.batchNorm = batchNorm
         self.div_flow = div_flow
         self.rgb_max = args.rgb_max
         self.args = args
+        self.fp16 = fp16
 
         self.channelnorm = ChannelNorm()
 
@@ -430,7 +431,7 @@ class FlowNet2CSS(nn.Module):
         self.flownetc = FlowNetC.FlowNetC(args, batchNorm=self.batchNorm)
         self.upsample1 = nn.Upsample(scale_factor=4, mode='bilinear')
 
-        if args.fp16:
+        if self.fp16:
             self.resample1 = nn.Sequential(
                             tofp32(), 
                             Resample2d(),
@@ -441,7 +442,7 @@ class FlowNet2CSS(nn.Module):
         # Block (FlowNetS1)
         self.flownets_1 = FlowNetS.FlowNetS(args, batchNorm=self.batchNorm)
         self.upsample2 = nn.Upsample(scale_factor=4, mode='bilinear')
-        if args.fp16:
+        if self.fp16:
             self.resample2 = nn.Sequential(
                             tofp32(), 
                             Resample2d(),
